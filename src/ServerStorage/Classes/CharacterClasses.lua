@@ -9,6 +9,7 @@ local GameCamera = require(Modules:WaitForChild("gameCamera"))
 local ServerStorage = game:GetService("ServerStorage")
 local ClassConfiguration = require(ServerStorage:WaitForChild("ClassConfiguration"))
 local ClassModels = ReplicatedStorage:WaitForChild("ClassModels")
+local CharacterClassBehavioral = ServerStorage:WaitForChild("CharacterClassBehavioral")
 CharacterClass.__index = CharacterClass
 
 export type CharacterClass = {
@@ -24,14 +25,27 @@ function CharacterClass.create(Class, Player)
     local ClassFolder = ClassModels:WaitForChild(Class)
     local ChildrenFolder = ClassFolder:GetChildren()
     local RandomIndex = math.random(1, #ChildrenFolder)
-    local RandomModel = ChildrenFolder[RandomIndex]:Clone()
+    local RandomModel:Model = ChildrenFolder[RandomIndex]:Clone()
     RandomModel.Parent = Workspace
     Player.Character = RandomModel
+    local newRootAttachment = Instance.new("Attachment")
+    newRootAttachment.Position = Vector3.zero
+    newRootAttachment.Name = "RootAttachment"
+    newRootAttachment.Parent = RandomModel.PrimaryPart
     self.Class = Class
     self.Camera = CreateGameCamera:FireClient(Player, 0.13, 0.13)
     self.Player = Player
     self.ClassConfiguration = ClassConfiguration.get(Class)
     self.Character = Player.Character::Model
+    local Humanoid = self.Character:WaitForChild("Humanoid")
+    local ClassConfig = self.ClassConfiguration
+    local BehavioralScriptName = ClassConfig["BehavioralScript"]
+    local HumanoidProperties = ClassConfig["HumanoidProperties"]
+    for property, value in pairs(HumanoidProperties) do
+        Humanoid[property] = value
+    end
+    local BehavioralFunction = require(CharacterClassBehavioral:WaitForChild(BehavioralScriptName))
+    BehavioralFunction(self)
     return CharacterClass
 end
 

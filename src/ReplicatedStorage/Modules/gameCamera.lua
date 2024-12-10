@@ -38,9 +38,25 @@ function GameCamera.create(bobbingSpeed, tiltSpeed)
 	self.Player = Players.LocalPlayer
 	self.bobbingSpeed = bobbingSpeed
 	self.tiltSpeed = tiltSpeed
-	local NewViewModel = ReplicatedStorage:WaitForChild("ViewModel") :: Model
+	local Character = self.Player.Character
+	Character.Archivable = true
+	local NewViewModel = self.Player.Character :: Model
+	NewViewModel.Archivable = true
 	NewViewModel = NewViewModel:Clone()
+	local Humanoid = NewViewModel:WaitForChild("Humanoid")::Humanoid
+	Humanoid.EvaluateStateMachine = false
 	self.ViewModel = NewViewModel
+	for _, part in pairs(NewViewModel:GetDescendants()) do
+		if part:IsA("BasePart") then
+			part.CanCollide = false
+			part.Anchored = false
+			if not part:IsAncestorOf(NewViewModel:WaitForChild("Left Arm")) or not part:IsAncestorOf("Right Arm") then
+				part.Transparency = 1
+			end
+		end
+	end
+	NewViewModel["Left Arm"].Transparency = 0
+	NewViewModel["Right Arm"].Transparency = 0
 	self.bobbleSpring = Spring.new()
 	self.swaySpring = Spring.new()
 	self.recoilSpring = Spring.new()
@@ -95,7 +111,7 @@ function GameCamera.resume(self: GameCamera)
 			camera.CFrame:VectorToObjectSpace(primaryPart.Velocity / math.max(characterHumanoid.WalkSpeed, 0.01))
 		local speedModifier = (characterHumanoid.WalkSpeed / 16)
 		tilt = math.clamp(lerp(tilt, movementVector.X * tiltSpeed, 0.1), -0.05, 0.1) / 2
-		local sineCFrame = calculateSine(bobbingSpeed * speedModifier, movementVector.Z * speedModifier)
+		local sineCFrame = calculateSine(bobbingSpeed * speedModifier, movementVector.Z * speedModifier / 2)
 		local lerpedSineX = lerp(previousSineX, sineCFrame.X, 0.1)
 		local lerpedSineY = lerp(previousSineY, sineCFrame.Y, 0.1)
 
@@ -115,10 +131,10 @@ function GameCamera.resume(self: GameCamera)
 		local VMTorso = self.ViewModel:WaitForChild("Torso")
 		VMTorso.CanCollide = false
 		ViewmodelPrimary.CFrame = camera.CFrame
-		local bobble = Vector3.new(getBobbing(10), getBobbing(5), getBobbing(5))
-		local mouseDelta = UserInputService:GetMouseDelta() * 5
+		local bobble = Vector3.new(getBobbing(1), getBobbing(1), getBobbing(1))
+		local mouseDelta = UserInputService:GetMouseDelta()
 		self.swaySpring:shove(Vector3.new(-mouseDelta.X / 500, mouseDelta.Y / 200, 0))
-		self.bobbleSpring:shove(bobble / 10 * primaryPart.Velocity.Magnitude / 10)
+		self.bobbleSpring:shove(bobble / 50 * primaryPart.Velocity.Magnitude / 50)
 
 		local updatedBobbleSpring = self.bobbleSpring:update(deltaTime)
 		local updatedSwaySpring = self.swaySpring:update(deltaTime)
@@ -160,3 +176,4 @@ function GameCamera.resume(self: GameCamera)
 end
 
 return GameCamera
+     

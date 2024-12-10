@@ -1,10 +1,10 @@
 local module = {}
 module.get = function(name)
-    local ReturnModuke = script:FindFirstChild(name)
-    if not ReturnModuke then
+    local ReturnModule = script:FindFirstChild(name)
+    if not ReturnModule then
         error("CLASS: "..name .." IS NOT FOUND")
     end
-    return ReturnModuke
+    return require(ReturnModule)
 end
 
 return module

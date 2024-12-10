@@ -1,3 +1,4 @@
+--!nocheck
 -- Constants
 
 local ITERATIONS = 8
