@@ -46,6 +46,7 @@ function CharacterClass.create(Class, Player)
     end
     local BehavioralFunction = require(CharacterClassBehavioral:WaitForChild(BehavioralScriptName))
     BehavioralFunction(self)
+    Remotes.EnableCharacterClient:FireClient(Player, Class)
     return CharacterClass
 end
 

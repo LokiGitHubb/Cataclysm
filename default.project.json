@@ -1,5 +1,5 @@
 {
-    "name": "Project Cataclysm",
+    "name": "Phantom's Cataclysm",
     "tree": {
       "$className": "DataModel",
       "ReplicatedStorage": {
@@ -12,7 +12,7 @@
       },
       "ServerScriptService": {
         "$className": "ServerScriptService",
-        "$ignoreUnknownInstances": true,
+        "$ignoreUnknownInstances": true,  
         "$path": "src/ServerScriptService"
       },
       "ReplicatedFirst":{

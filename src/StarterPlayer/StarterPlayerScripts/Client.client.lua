@@ -20,7 +20,14 @@ local CreateGameCamera = GameCameraRemotes:WaitForChild("CreateGameCamera")
 local CreateVisualTool = GameCameraRemotes:WaitForChild("CreateVisualTool")
 local RegisterJumpEvent = Remotes:WaitForChild("RegisterDoubleJumper")
 local CreatedGameCam: GameCamera.GameCamera
+local PlayerScripts = script.Parent
+local ClassScripts = PlayerScripts:WaitForChild("ClassScripts")
 local Items = ReplicatedStorage:WaitForChild("Items")
+
+for _, classScript:LocalScript in pairs(ClassScripts:GetChildren()) do
+	classScript.Enabled = false
+end
+
 
 export type ButtonBinding = {
 	name: string,
@@ -29,7 +36,7 @@ export type ButtonBinding = {
 
 local function onCreateGameCam(bobbingSpeed, tiltSpeed)
 	print("CREATING GAME CAMERA")
-	CreatedGameCam = GameCamera.create(bobbingSpeed, tiltSpeed)
+	CreatedGameCam = GameCamera.create(bobbingSpeed, tiltSpeed)::GameCamera.GameCamera
 	CreatedGameCam:resume()
 	print("RESUMED GAME CAMERA")
 end
@@ -100,12 +107,13 @@ local function registerButtonBind(keybind: Enum.KeyCode, remote, name)
 	if keybindExisting then
 		warn("OVERWRITING KEYBIND EXISTANCE")
 	end
+	print(keybind)
 	keybinds[keybind] = { ["remote"] = remote, ["name"] = name }
 end
 
 local function registerInputEnded(keybind:Enum.KeyCode, remote, name)
 	local keybindExisting = endedKeybinds[keybind]
-	if endedKeybinds then
+	if keybindExisting then
 		warn("OVERWRITING KEYBIND EXISTANCE")
 	end
 	endedKeybinds[keybind] = { ["remote"] = remote, ["name"] = name }
@@ -114,9 +122,12 @@ end
 local function processInput(Input: InputObject, gameProcessed)
 	if not gameProcessed then
 		local callback = keybinds[Input.KeyCode]
+		print(callback)
+		print(Input.KeyCode)
 		if callback then
 			local remote = callback["remote"]
 			if callback then
+				print(callback)
 				remote:FireServer(callback["name"])
 			end
 		end
@@ -135,6 +146,23 @@ local function processInputEnded(Input: InputObject, gameProcessed)
 	end
 end
 
+local function ResumeBobbing()
+	CreatedGameCam:reconnectEffects()
+end
+
+local function stopBobbing()
+	CreatedGameCam.cameraUpdateConnection:Disconnect()
+end
+
+local function enableClassScript(class)
+	local classScript = ClassScripts:FindFirstChild(class)
+	if classScript then
+		classScript.Enabled = true
+	else
+		warn("CLASS SCRIPT NOT FOUND")
+	end
+end
+
 
 CreateGameCamera.OnClientEvent:Connect(onCreateGameCam)
 CreateVisualTool.OnClientEvent:Connect(CreateVisualItem)
@@ -143,3 +171,6 @@ UserInputService.InputBegan:Connect(processInput)
 UserInputService.InputEnded:Connect(processInputEnded)
 Remotes.RegisterButtonBinding.OnClientEvent:Connect(registerButtonBind)
 Remotes.RegisterInputEnded.OnClientEvent:Connect(registerInputEnded)
+Remotes.StopBobbing.OnClientEvent:Connect(stopBobbing)
+Remotes.StartBobbing.OnClientEvent:Connect(ResumeBobbing)
+Remotes.EnableCharacterClient.OnClientEvent:Connect(enableClassScript)

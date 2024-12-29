@@ -5,13 +5,15 @@ local Workspace = game:GetService("Workspace")
 local Classes = ServerStorage:WaitForChild("Classes")
 local CharacterClass = require(Classes:WaitForChild("CharacterClasses"))
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Modules = ReplicatedStorage:WaitForChild("Modules")
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
 local RegisterEvent = Remotes:WaitForChild("RegisterDoubleJumper") :: RemoteEvent
 local RegisterButtonBinding = Remotes:WaitForChild("RegisterButtonBinding") :: RemoteEvent
 local RegisterButtonEnded = Remotes:WaitForChild("RegisterInputEnded")
 local StartDropKick = Remotes:WaitForChild("StartChargerDK")
 local EndDropKick = Remotes:WaitForChild("EndChargerDK")
-
+local startGameCamera = Remotes:WaitForChild("StartBobbing")
+local Lighting = game:GetService("Lighting")
 return function(Class: CharacterClass.CharacterClass)
 	local Player = Class.Player
 	local Character = Class.Character
@@ -19,9 +21,22 @@ return function(Class: CharacterClass.CharacterClass)
 	local UpdateConnection: RBXScriptConnection
 	RegisterEvent:FireClient(Player)
 	local ForceTween: Tween
-	local TINfo = TweenInfo.new(5, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut)
-	StartDropKick.OnServerEvent:Connect(function(PlayerIncoming)
+	local TINfo = TweenInfo.new(9, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
+	local deaccelerationTI = TweenInfo.new(4, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
+	local UpdateTI = TweenInfo.new(0.1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
+	local function StopDropkick(PlayerIncoming)
 		if PlayerIncoming == Player then
+			Lighting:WaitForChild("ChargerCharge").Enabled = false
+			local PropertyTable = {
+				["MaxForce"] = Vector3.zero,
+				["P"] = 0
+			}
+			local SlowdownTween = TweenService:Create(VelocityObject, deaccelerationTI, PropertyTable)
+			SlowdownTween:Play()
+			
+			task.wait(2)
+			startGameCamera:FireClient(Player)
+			SlowdownTween:Play()
 			if UpdateConnection then
 				UpdateConnection:Disconnect()
 			end
@@ -29,49 +44,67 @@ return function(Class: CharacterClass.CharacterClass)
 				VelocityObject:Destroy()
 			end
 			if ForceTween and ForceTween.PlaybackState == Enum.PlaybackState.Playing then
+				ForceTween:Cancel()
+			end
+		end
+	end
+	StartDropKick.OnServerEvent:Connect(function(PlayerIncoming)
+		if PlayerIncoming == Player then
+			print("Starting Dropkick")
+			Lighting:WaitForChild("ChargerCharge").Enabled = true
+			if UpdateConnection then
+				UpdateConnection:Disconnect()
+			end
+			if VelocityObject then
+				VelocityObject:Destroy()
+			end
+			if ForceTween then
 				ForceTween:Cancel()
 			end
 			VelocityObject = Instance.new("BodyPosition")
+			VelocityObject.Parent = Character.PrimaryPart
 			local Params = RaycastParams.new()
 			Params.FilterType = Enum.RaycastFilterType.Exclude
 			Params.FilterDescendantsInstances = { Character }
+			local UpdateTween:Tween
 			UpdateConnection = RunService.Heartbeat:Connect(function()
 				local PositionToGo
 				local HumanoidRootPart = Character.PrimaryPart
-				local RaycastResult = Workspace:Raycast(HumanoidRootPart.Position, Vector3.new(0, 0, 20) * 5, Params)
+				local NewPosition = HumanoidRootPart.CFrame + HumanoidRootPart.CFrame.LookVector * 40
+				local RaycastPosition = HumanoidRootPart.CFrame + HumanoidRootPart.CFrame.LookVector
+				local RaycastResult = Workspace:Raycast(HumanoidRootPart.Position, RaycastPosition.Position, Params)
 				if RaycastResult then
-					local FoundInstance = RaycastResult.Instance :: BasePart
-					if FoundInstance.CanCollide == true then
-						PositionToGo = RaycastResult.Position
-					else
-						PositionToGo = (HumanoidRootPart.CFrame + (Vector3.new(0, 0, 20) * 10)).Position
-					end
-				else
-					PositionToGo = (HumanoidRootPart.CFrame + (Vector3.new(0, 0, 20) * 10)).Position
+					StopDropkick(PlayerIncoming)
 				end
-				VelocityObject.Position = PositionToGo
+				PositionToGo = NewPosition.Position
+				local PropertyTable = {
+					["Position"] = PositionToGo
+				}
+				print("Running")
+				UpdateTween = TweenService:Create(VelocityObject, UpdateTI, PropertyTable)
+				UpdateTween:Play()
+				task.wait(0.85)
 			end)
-			VelocityObject.MaxForce = Vector3.new(0, 0, 0)
+			VelocityObject.MaxForce = Vector3.zero
+			VelocityObject.P = 0
 			local PropertyTable = {
-				["MaxForce"] = Vector3.new(50000, 50000, 50000),
+				["MaxForce"] = Vector3.new(50000, 10, 50000),
+				["P"] = 5250
 			}
+			task.spawn(function()
+				Remotes.StartFillingBar:FireClient(PlayerIncoming)
+				task.wait(8)
+				StopDropkick(PlayerIncoming)
+				Remotes.ResetDropkick:FireClient(PlayerIncoming)
+			end)
 			ForceTween = TweenService:Create(VelocityObject, TINfo, PropertyTable)
+			ForceTween:Play()
+			task.wait(4)
+			Remotes.StopBobbing:FireClient(Player)
 		end
 	end)
-	EndDropKick.OnServerEvent:Connect(function(PlayerIncoming)
-		if PlayerIncoming == Player then
-			if UpdateConnection then
-				UpdateConnection:Disconnect()
-			end
-			if VelocityObject then
-				VelocityObject:Destroy()
-			end
-			if ForceTween and ForceTween.PlaybackState == Enum.PlaybackState.Playing then
-				ForceTween:Cancel()
-			end
-		end
-	end)
+	EndDropKick.OnServerEvent:Connect(StopDropkick)
 	RegisterButtonBinding:FireClient(Player, Enum.KeyCode.C, Remotes:WaitForChild("Dash"))
-	RegisterButtonBinding:FireClient(Player, Enum.KeyCode.LeftShift, StartDropKick)
-	RegisterButtonEnded:FireClient(Player, Enum.KeyCode.LeftShift, EndDropKick)
+	RegisterButtonBinding:FireClient(Player, Enum.KeyCode.Q, StartDropKick)
+	RegisterButtonEnded:FireClient(Player, Enum.KeyCode.Q, EndDropKick)
 end
