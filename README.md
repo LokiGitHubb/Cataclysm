@@ -1,1 +1,3 @@
-
+this is the phantom's cataclysm framework. This includes CharacterClass, which is a easy way to load in different classes, and a easy way to add in classes. 
+It also includes a viewmodel system, which includes bobbing, recoil support, and also game camera effects such as tilting and the camera following a sine wave
+It also has wally installed, a package manager that can be used to manage third party modu

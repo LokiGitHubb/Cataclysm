@@ -1,0 +1,257 @@
+{
+    "extension": "linecounter",
+    "version": "0.2.7",
+    "workspace": "c:\\Users\\jding\\OneDrive\\Desktop\\Cataclysm",
+    "linecount": [
+        {
+            "version": "0.2.7",
+            "counttime": "2024-11-26 21:42:48",
+            "filesum": 14,
+            "codesum": 337,
+            "commentsum": 1,
+            "blanksum": 37,
+            "statistics": {
+                ".json": {
+                    "code": 53,
+                    "comment": 0,
+                    "blank": 0
+                },
+                ".toml": {
+                    "code": 8,
+                    "comment": 1,
+                    "blank": 1
+                },
+                ".md": {
+                    "code": 0,
+                    "comment": 0,
+                    "blank": 1
+                },
+                ".lua": {
+                    "code": 276,
+                    "comment": 0,
+                    "blank": 35
+                }
+            },
+            "filelist": [
+                {
+                    "blank": 1,
+                    "code": 7,
+                    "comment": 1,
+                    "filename": "aftman.toml"
+                },
+                {
+                    "blank": 0,
+                    "code": 52,
+                    "comment": 0,
+                    "filename": "default.project.json"
+                },
+                {
+                    "blank": 1,
+                    "code": 0,
+                    "comment": 0,
+                    "filename": "README.md"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": "selene.toml"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": "sourcemap.json"
+                },
+                {
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0,
+                    "filename": "src\\ReplicatedStorage\\Modules\\AnimationManager.lua"
+                },
+                {
+                    "blank": 9,
+                    "code": 153,
+                    "comment": 0,
+                    "filename": "src\\ReplicatedStorage\\Modules\\gameCamera.lua"
+                },
+                {
+                    "blank": 16,
+                    "code": 52,
+                    "comment": 0,
+                    "filename": "src\\ReplicatedStorage\\Modules\\Spring.lua"
+                },
+                {
+                    "blank": 1,
+                    "code": 11,
+                    "comment": 0,
+                    "filename": "src\\ServerScriptService\\Server.server.lua"
+                },
+                {
+                    "blank": 1,
+                    "code": 2,
+                    "comment": 0,
+                    "filename": "src\\ServerStorage\\ClassConfiguration\\Charger.lua"
+                },
+                {
+                    "blank": 1,
+                    "code": 9,
+                    "comment": 0,
+                    "filename": "src\\ServerStorage\\ClassConfiguration\\init.lua"
+                },
+                {
+                    "blank": 5,
+                    "code": 35,
+                    "comment": 0,
+                    "filename": "src\\ServerStorage\\Classes\\CharacterClasses.lua"
+                },
+                {
+                    "blank": 2,
+                    "code": 14,
+                    "comment": 0,
+                    "filename": "src\\StarterPlayer\\StarterPlayerScripts\\Client.client.lua"
+                },
+                {
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0,
+                    "filename": "wally.toml"
+                }
+            ]
+        },
+        {
+            "version": "0.2.7",
+            "counttime": "2024-11-28 15:47:56",
+            "filesum": 17,
+            "codesum": 630,
+            "commentsum": 1,
+            "blanksum": 71,
+            "statistics": {
+                ".toml": {
+                    "code": 8,
+                    "comment": 1,
+                    "blank": 1
+                },
+                ".json": {
+                    "code": 53,
+                    "comment": 0,
+                    "blank": 0
+                },
+                ".lua": {
+                    "code": 569,
+                    "comment": 0,
+                    "blank": 69
+                },
+                ".md": {
+                    "code": 0,
+                    "comment": 0,
+                    "blank": 1
+                }
+            },
+            "filelist": [
+                {
+                    "blank": 1,
+                    "code": 7,
+                    "comment": 1,
+                    "filename": "aftman.toml"
+                },
+                {
+                    "blank": 0,
+                    "code": 52,
+                    "comment": 0,
+                    "filename": "default.project.json"
+                },
+                {
+                    "blank": 1,
+                    "code": 0,
+                    "comment": 0,
+                    "filename": "README.md"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": "selene.toml"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": "sourcemap.json"
+                },
+                {
+                    "blank": 11,
+                    "code": 114,
+                    "comment": 0,
+                    "filename": "src\\ReplicatedStorage\\Modules\\AnimationManager.lua"
+                },
+                {
+                    "blank": 8,
+                    "code": 158,
+                    "comment": 0,
+                    "filename": "src\\ReplicatedStorage\\Modules\\gameCamera.lua"
+                },
+                {
+                    "blank": 16,
+                    "code": 53,
+                    "comment": 0,
+                    "filename": "src\\ReplicatedStorage\\Modules\\Spring.lua"
+                },
+                {
+                    "blank": 1,
+                    "code": 11,
+                    "comment": 0,
+                    "filename": "src\\ServerScriptService\\Server.server.lua"
+                },
+                {
+                    "blank": 2,
+                    "code": 11,
+                    "comment": 0,
+                    "filename": "src\\ServerStorage\\CharacterClassBehavioral\\ChargerBehavioral.lua"
+                },
+                {
+                    "blank": 0,
+                    "code": 6,
+                    "comment": 0,
+                    "filename": "src\\ServerStorage\\ClassConfiguration\\Charger.lua"
+                },
+                {
+                    "blank": 1,
+                    "code": 9,
+                    "comment": 0,
+                    "filename": "src\\ServerStorage\\ClassConfiguration\\init.lua"
+                },
+                {
+                    "blank": 5,
+                    "code": 40,
+                    "comment": 0,
+                    "filename": "src\\ServerStorage\\Classes\\CharacterClasses.lua"
+                },
+                {
+                    "blank": 6,
+                    "code": 67,
+                    "comment": 0,
+                    "filename": "src\\ServerStorage\\Classes\\ItemClass.lua"
+                },
+                {
+                    "blank": 12,
+                    "code": 18,
+                    "comment": 0,
+                    "filename": "src\\ServerStorage\\ItemBehavioral\\Shotgun.lua"
+                },
+                {
+                    "blank": 7,
+                    "code": 82,
+                    "comment": 0,
+                    "filename": "src\\StarterPlayer\\StarterPlayerScripts\\Client.client.lua"
+                },
+                {
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0,
+                    "filename": "wally.toml"
+                }
+            ]
+        }
+    ]
+}

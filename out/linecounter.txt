@@ -1,0 +1,71 @@
+===============================================================================
+EXTENSION NAME : linecounter
+EXTENSION VERSION : 0.2.7
+-------------------------------------------------------------------------------
+count time : 2024-11-26 21:42:48
+count workspace : c:\Users\jding\OneDrive\Desktop\Cataclysm
+total files : 14
+total code lines : 337
+total comment lines : 1
+total blank lines : 37
+
+    statistics
+   |      extension|     total code|  total comment|    total blank|percent|
+   -------------------------------------------------------------------------
+   |          .json|             53|              0|              0|     16|
+   |          .toml|              8|              1|              1|    2.4|
+   |            .md|              0|              0|              1|    0.0|
+   |           .lua|            276|              0|             35|     82|
+   -------------------------------------------------------------------------
+aftman.toml, code is 7, comment is 1, blank is 1.
+default.project.json, code is 52, comment is 0, blank is 0.
+README.md, code is 0, comment is 0, blank is 1.
+selene.toml, code is 1, comment is 0, blank is 0.
+sourcemap.json, code is 1, comment is 0, blank is 0.
+src\ReplicatedStorage\Modules\AnimationManager.lua, code is 0, comment is 0, blank is 0.
+src\ReplicatedStorage\Modules\gameCamera.lua, code is 153, comment is 0, blank is 9.
+src\ReplicatedStorage\Modules\Spring.lua, code is 52, comment is 0, blank is 16.
+src\ServerScriptService\Server.server.lua, code is 11, comment is 0, blank is 1.
+src\ServerStorage\ClassConfiguration\Charger.lua, code is 2, comment is 0, blank is 1.
+src\ServerStorage\ClassConfiguration\init.lua, code is 9, comment is 0, blank is 1.
+src\ServerStorage\Classes\CharacterClasses.lua, code is 35, comment is 0, blank is 5.
+src\StarterPlayer\StarterPlayerScripts\Client.client.lua, code is 14, comment is 0, blank is 2.
+wally.toml, code is 0, comment is 0, blank is 0.
+===============================================================================
+===============================================================================
+EXTENSION NAME : linecounter
+EXTENSION VERSION : 0.2.7
+-------------------------------------------------------------------------------
+count time : 2024-11-28 15:47:56
+count workspace : c:\Users\jding\OneDrive\Desktop\Cataclysm
+total files : 17
+total code lines : 630
+total comment lines : 1
+total blank lines : 71
+
+    statistics
+   |      extension|     total code|  total comment|    total blank|percent|
+   -------------------------------------------------------------------------
+   |          .toml|              8|              1|              1|    1.3|
+   |          .json|             53|              0|              0|    8.4|
+   |           .lua|            569|              0|             69|     90|
+   |            .md|              0|              0|              1|    0.0|
+   -------------------------------------------------------------------------
+aftman.toml, code is 7, comment is 1, blank is 1.
+default.project.json, code is 52, comment is 0, blank is 0.
+README.md, code is 0, comment is 0, blank is 1.
+selene.toml, code is 1, comment is 0, blank is 0.
+sourcemap.json, code is 1, comment is 0, blank is 0.
+src\ReplicatedStorage\Modules\AnimationManager.lua, code is 114, comment is 0, blank is 11.
+src\ReplicatedStorage\Modules\gameCamera.lua, code is 158, comment is 0, blank is 8.
+src\ReplicatedStorage\Modules\Spring.lua, code is 53, comment is 0, blank is 16.
+src\ServerScriptService\Server.server.lua, code is 11, comment is 0, blank is 1.
+src\ServerStorage\CharacterClassBehavioral\ChargerBehavioral.lua, code is 11, comment is 0, blank is 2.
+src\ServerStorage\ClassConfiguration\Charger.lua, code is 6, comment is 0, blank is 0.
+src\ServerStorage\ClassConfiguration\init.lua, code is 9, comment is 0, blank is 1.
+src\ServerStorage\Classes\CharacterClasses.lua, code is 40, comment is 0, blank is 5.
+src\ServerStorage\Classes\ItemClass.lua, code is 67, comment is 0, blank is 6.
+src\ServerStorage\ItemBehavioral\Shotgun.lua, code is 18, comment is 0, blank is 12.
+src\StarterPlayer\StarterPlayerScripts\Client.client.lua, code is 82, comment is 0, blank is 7.
+wally.toml, code is 0, comment is 0, blank is 0.
+===============================================================================
