@@ -179,38 +179,39 @@ end
 
 function GameCamera.reconnectEffects(self: GameCamera)
 	if self.cameraUpdateConnection then
-		local camera = self.Camera
-		local Character = self.Character
-		local primaryPart = Character.PrimaryPart
-		local characterHumanoid = Character:WaitForChild("Humanoid")
-		local tilt = 0
-		local sinValue = 0
-		local function calculateSine(speed, intensity)
-			sinValue += speed
-			if sinValue > (math.pi * 2) then
-				sinValue = 0
-			end
-			local sineY = intensity * math.sin(2 * sinValue)
-			local sineX = intensity * math.sin(sinValue)
-			local sineCFrame = CFrame.new(sineX, sineY, 0)
-			return sineCFrame
-		end
-		local previousSineX = 0
-		local previousSineY = 0
-		self.cameraUpdateConnection = RunService.RenderStepped:Connect(function()
-			local movementVector =
-				camera.CFrame:VectorToObjectSpace(primaryPart.Velocity / math.max(characterHumanoid.WalkSpeed, 0.01))
-			local speedModifier = (characterHumanoid.WalkSpeed / 16)
-			tilt = math.clamp(lerp(tilt, movementVector.X * self.tiltSpeed, 0.1), -0.05, 0.1) / 2
-			local sineCFrame = calculateSine(self.bobbingSpeed * speedModifier, movementVector.Z * speedModifier / 2)
-			local lerpedSineX = lerp(previousSineX, sineCFrame.X, 0.1)
-			local lerpedSineY = lerp(previousSineY, sineCFrame.Y, 0.1)
-
-			camera.CFrame *= CFrame.Angles(0, 0, 0) * CFrame.new(lerpedSineX, lerpedSineY, 0)
-			previousSineX = lerpedSineX
-			previousSineY = lerpedSineY
-		end)
+		self.cameraUpdateConnection:Disconnect()
 	end
+	local camera = self.Camera
+	local Character = self.Character
+	local primaryPart = Character.PrimaryPart
+	local characterHumanoid = Character:WaitForChild("Humanoid")
+	local tilt = 0
+	local sinValue = 0
+	local function calculateSine(speed, intensity)
+		sinValue += speed
+		if sinValue > (math.pi * 2) then
+			sinValue = 0
+		end
+		local sineY = intensity * math.sin(2 * sinValue)
+		local sineX = intensity * math.sin(sinValue)
+		local sineCFrame = CFrame.new(sineX, sineY, 0)
+		return sineCFrame
+	end
+	local previousSineX = 0
+	local previousSineY = 0
+	self.cameraUpdateConnection = RunService.RenderStepped:Connect(function()
+		local movementVector =
+			camera.CFrame:VectorToObjectSpace(primaryPart.Velocity / math.max(characterHumanoid.WalkSpeed, 0.01))
+		local speedModifier = (characterHumanoid.WalkSpeed / 16)
+		tilt = math.clamp(lerp(tilt, movementVector.X * self.tiltSpeed, 0.1), -0.05, 0.1) / 2
+		local sineCFrame = calculateSine(self.bobbingSpeed * speedModifier, movementVector.Z * speedModifier / 2)
+		local lerpedSineX = lerp(previousSineX, sineCFrame.X, 0.1)
+		local lerpedSineY = lerp(previousSineY, sineCFrame.Y, 0.1)
+
+		camera.CFrame *= CFrame.Angles(0, 0, 0) * CFrame.new(lerpedSineX, lerpedSineY, 0)
+		previousSineX = lerpedSineX
+		previousSineY = lerpedSineY
+	end)
 end
 
 return GameCamera

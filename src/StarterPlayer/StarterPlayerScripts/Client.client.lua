@@ -147,6 +147,9 @@ local function processInputEnded(Input: InputObject, gameProcessed)
 end
 
 local function ResumeBobbing()
+	if CreatedGameCam.cameraUpdateConnection then
+		CreatedGameCam.cameraUpdateConnection:Disconnect()
+	end
 	CreatedGameCam:reconnectEffects()
 end
 

@@ -1,3 +1,4 @@
+--!strict
 local ServerStorage = game:GetService("ServerStorage")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
@@ -13,7 +14,12 @@ local RegisterButtonEnded = Remotes:WaitForChild("RegisterInputEnded")
 local StartDropKick = Remotes:WaitForChild("StartChargerDK")
 local EndDropKick = Remotes:WaitForChild("EndChargerDK")
 local startGameCamera = Remotes:WaitForChild("StartBobbing")
+local Packets = require(ReplicatedStorage:WaitForChild("Packet"))
+local updateChargerPercentage = Packets["UpateChargerPercentage"]
 local Lighting = game:GetService("Lighting")
+local PercentUpdateTask:thread = nil
+local autoStopThead:thread = nil
+
 return function(Class: CharacterClass.CharacterClass)
 	local Player = Class.Player
 	local Character = Class.Character
@@ -21,12 +27,17 @@ return function(Class: CharacterClass.CharacterClass)
 	local UpdateConnection: RBXScriptConnection
 	RegisterEvent:FireClient(Player)
 	local ForceTween: Tween
-	local TINfo = TweenInfo.new(9, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
-	local deaccelerationTI = TweenInfo.new(4, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
+	local TINfo = TweenInfo.new(4, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
+	local deaccelerationTI = TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
 	local UpdateTI = TweenInfo.new(0.1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
-	local function StopDropkick(PlayerIncoming)
+	local function StopDropkick(PlayerIncoming:Player)
 		if PlayerIncoming == Player then
-			Lighting:WaitForChild("ChargerCharge").Enabled = false
+			Remotes.ResetDropkick:FireClient(PlayerIncoming)
+			Remotes.ChargerGreenFlash:FireClient(PlayerIncoming, false)
+			print("stopping dropkick")
+			if PercentUpdateTask then
+				task.cancel(PercentUpdateTask)
+			end
 			local PropertyTable = {
 				["MaxForce"] = Vector3.zero,
 				["P"] = 0
@@ -34,9 +45,8 @@ return function(Class: CharacterClass.CharacterClass)
 			local SlowdownTween = TweenService:Create(VelocityObject, deaccelerationTI, PropertyTable)
 			SlowdownTween:Play()
 			
-			task.wait(2)
+			task.wait(0.5)
 			startGameCamera:FireClient(Player)
-			SlowdownTween:Play()
 			if UpdateConnection then
 				UpdateConnection:Disconnect()
 			end
@@ -46,12 +56,21 @@ return function(Class: CharacterClass.CharacterClass)
 			if ForceTween and ForceTween.PlaybackState == Enum.PlaybackState.Playing then
 				ForceTween:Cancel()
 			end
+			updateChargerPercentage.sendTo(0, PlayerIncoming)
 		end
 	end
-	StartDropKick.OnServerEvent:Connect(function(PlayerIncoming)
+	StartDropKick.OnServerEvent:Connect(function(PlayerIncoming:Player)
 		if PlayerIncoming == Player then
 			print("Starting Dropkick")
-			Lighting:WaitForChild("ChargerCharge").Enabled = true
+			local DamagePercentage = 0
+			
+			PercentUpdateTask = task.spawn(function()
+				for _ = 1, 100 do
+					DamagePercentage += 1
+					updateChargerPercentage.sendTo(DamagePercentage, PlayerIncoming)
+					task.wait(0.05)
+				end
+			end)
 			if UpdateConnection then
 				UpdateConnection:Disconnect()
 			end
@@ -61,6 +80,7 @@ return function(Class: CharacterClass.CharacterClass)
 			if ForceTween then
 				ForceTween:Cancel()
 			end
+			Remotes.ChargerGreenFlash:FireClient(PlayerIncoming, true)
 			VelocityObject = Instance.new("BodyPosition")
 			VelocityObject.Parent = Character.PrimaryPart
 			local Params = RaycastParams.new()
@@ -69,13 +89,10 @@ return function(Class: CharacterClass.CharacterClass)
 			local UpdateTween:Tween
 			UpdateConnection = RunService.Heartbeat:Connect(function()
 				local PositionToGo
-				local HumanoidRootPart = Character.PrimaryPart
+				local HumanoidRootPart = Character.PrimaryPart::BasePart
 				local NewPosition = HumanoidRootPart.CFrame + HumanoidRootPart.CFrame.LookVector * 40
 				local RaycastPosition = HumanoidRootPart.CFrame + HumanoidRootPart.CFrame.LookVector
 				local RaycastResult = Workspace:Raycast(HumanoidRootPart.Position, RaycastPosition.Position, Params)
-				if RaycastResult then
-					StopDropkick(PlayerIncoming)
-				end
 				PositionToGo = NewPosition.Position
 				local PropertyTable = {
 					["Position"] = PositionToGo
@@ -91,15 +108,18 @@ return function(Class: CharacterClass.CharacterClass)
 				["MaxForce"] = Vector3.new(50000, 10, 50000),
 				["P"] = 5250
 			}
-			task.spawn(function()
+			autoStopThead = task.spawn(function()
 				Remotes.StartFillingBar:FireClient(PlayerIncoming)
 				task.wait(8)
 				StopDropkick(PlayerIncoming)
-				Remotes.ResetDropkick:FireClient(PlayerIncoming)
+				
+				if autoStopThead then
+					task.cancel(autoStopThead)
+				end
 			end)
 			ForceTween = TweenService:Create(VelocityObject, TINfo, PropertyTable)
 			ForceTween:Play()
-			task.wait(4)
+			task.wait(2)
 			Remotes.StopBobbing:FireClient(Player)
 		end
 	end)
