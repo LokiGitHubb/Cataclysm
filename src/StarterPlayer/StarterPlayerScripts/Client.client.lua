@@ -12,9 +12,12 @@ local Humanoid = Character:WaitForChild("Humanoid") :: Humanoid
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
 local Modules = ReplicatedStorage:WaitForChild("Modules")
+local FastCast = require(Modules:WaitForChild("FastCastRedux"))
+local FastCastType = require(Modules.FastCastRedux.TypeDefinitions)
 local CharacterTorso = Character:WaitForChild("Torso") :: BasePart
 local GameCamera = require(Modules:WaitForChild("gameCamera"))
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
+local RemoteFunctions = Remotes:WaitForChild("Functions")
 local GameCameraRemotes = Remotes:WaitForChild("GameCamera")
 local CreateGameCamera = GameCameraRemotes:WaitForChild("CreateGameCamera")
 local CreateVisualTool = GameCameraRemotes:WaitForChild("CreateVisualTool")
@@ -23,11 +26,13 @@ local CreatedGameCam: GameCamera.GameCamera
 local PlayerScripts = script.Parent
 local ClassScripts = PlayerScripts:WaitForChild("ClassScripts")
 local Items = ReplicatedStorage:WaitForChild("Items")
+local CastGun = Remotes:WaitForChild("CastGun")
+local RegisterHit = Remotes:WaitForChild("RegisterHit")
+FastCast.VisualizeCasts = true
 
-for _, classScript:LocalScript in pairs(ClassScripts:GetChildren()) do
+for _, classScript: LocalScript in pairs(ClassScripts:GetChildren()) do
 	classScript.Enabled = false
 end
-
 
 export type ButtonBinding = {
 	name: string,
@@ -36,7 +41,7 @@ export type ButtonBinding = {
 
 local function onCreateGameCam(bobbingSpeed, tiltSpeed)
 	print("CREATING GAME CAMERA")
-	CreatedGameCam = GameCamera.create(bobbingSpeed, tiltSpeed)::GameCamera.GameCamera
+	CreatedGameCam = GameCamera.create(bobbingSpeed, tiltSpeed) :: GameCamera.GameCamera
 	CreatedGameCam:resume()
 	print("RESUMED GAME CAMERA")
 end
@@ -100,8 +105,8 @@ local function RegisterDoubleJump()
 end
 
 local keybinds: {} = {}
-local endedKeybinds:{} = {}
- 
+local endedKeybinds: {} = {}
+
 local function registerButtonBind(keybind: Enum.KeyCode, remote, name)
 	local keybindExisting = keybinds[keybind]
 	if keybindExisting then
@@ -111,7 +116,7 @@ local function registerButtonBind(keybind: Enum.KeyCode, remote, name)
 	keybinds[keybind] = { ["remote"] = remote, ["name"] = name }
 end
 
-local function registerInputEnded(keybind:Enum.KeyCode, remote, name)
+local function registerInputEnded(keybind: Enum.KeyCode, remote, name)
 	local keybindExisting = endedKeybinds[keybind]
 	if keybindExisting then
 		warn("OVERWRITING KEYBIND EXISTANCE")
@@ -122,12 +127,9 @@ end
 local function processInput(Input: InputObject, gameProcessed)
 	if not gameProcessed then
 		local callback = keybinds[Input.KeyCode]
-		print(callback)
-		print(Input.KeyCode)
 		if callback then
 			local remote = callback["remote"]
 			if callback then
-				print(callback)
 				remote:FireServer(callback["name"])
 			end
 		end
@@ -166,6 +168,17 @@ local function enableClassScript(class)
 	end
 end
 
+local Caster = FastCast.new()
+local function Cast(Origin, Direction, Velocity, Params: RaycastParams)
+	print("CASTING")
+	local NewBehavior = FastCast.newBehavior()
+	NewBehavior.RaycastParams = Params
+	Caster:Fire(Origin, Direction, Velocity, NewBehavior)
+end
+
+Caster.RayHit:Connect(function(_, b)
+	print(b)
+end)
 
 CreateGameCamera.OnClientEvent:Connect(onCreateGameCam)
 CreateVisualTool.OnClientEvent:Connect(CreateVisualItem)
@@ -177,3 +190,4 @@ Remotes.RegisterInputEnded.OnClientEvent:Connect(registerInputEnded)
 Remotes.StopBobbing.OnClientEvent:Connect(stopBobbing)
 Remotes.StartBobbing.OnClientEvent:Connect(ResumeBobbing)
 Remotes.EnableCharacterClient.OnClientEvent:Connect(enableClassScript)
+Remotes.CastGun.OnClientEvent:Connect(Cast)

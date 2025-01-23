@@ -48,5 +48,6 @@
         "$ignoreUnknownInstances": true,
         "$path": "src/Workspace"
       }
-    }
+    },
+    "servePort": 12489
   }
