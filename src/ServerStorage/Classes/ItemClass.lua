@@ -66,7 +66,7 @@ function ItemClass.equip(self: Item)
 	NewGlobalToolGrip.Part1 = GlobalTool.PrimaryPart
 	NewGlobalToolGrip.Parent = CharacterTorso
 	GlobalTool.Parent = CharacterTorso
-	task.wait(0.1)
+	task.wait(0.5)
 	CreateVisualTool:FireClient(player, self.ItemName)
 end
 

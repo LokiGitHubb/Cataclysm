@@ -2,6 +2,7 @@ local ServerStorage = game:GetService("ServerStorage")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
+local SpawnPlayer = Remotes:WaitForChild("SpawnPlayer")
 local DashEvent = Remotes:WaitForChild("Dash")
 local Classes = ServerStorage:WaitForChild("Classes")
 local ItemClass = require(Classes:WaitForChild("ItemClass"))
@@ -12,11 +13,6 @@ Players.PlayerAdded:Connect(function(Player)
 	if not Player:HasAppearanceLoaded() then
 		Player.CharacterAppearanceLoaded:Wait()
 	end
-	task.spawn(function()
-		CharacterClasses.create("Charger", Player)
-	end)
-	local NewItem = ItemClass.create("Shotgun", Player, Enum.KeyCode.One)
-	NewItem:equip()
 end)
 
 local DASHDISTANCE = 20
@@ -50,5 +46,13 @@ local function DashPlayer(Player: Player)
         Force:Destroy()
     end)
 end
+
+SpawnPlayer.OnServerEvent:Connect(function(Player, Class)
+	CharacterClasses.create(Class, Player)
+	local NewItem = ItemClass.create("Shotgun", Player, Enum.KeyCode.One)
+	task.wait(0.5)
+	NewItem:equip()
+end)
+
 
 DashEvent.OnServerEvent:Connect(DashPlayer)

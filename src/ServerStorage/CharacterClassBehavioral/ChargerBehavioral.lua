@@ -30,8 +30,10 @@ return function(Class: CharacterClass.CharacterClass)
 	local TINfo = TweenInfo.new(4, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
 	local deaccelerationTI = TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
 	local UpdateTI = TweenInfo.new(0.1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
+	local Audio = Character:WaitForChild("Torso"):WaitForChild("ChargeSound")::Sound
 	local function StopDropkick(PlayerIncoming:Player)
 		if PlayerIncoming == Player then
+			Audio:Stop()
 			Remotes.ResetDropkick:FireClient(PlayerIncoming)
 			Remotes.ChargerGreenFlash:FireClient(PlayerIncoming, false)
 			print("stopping dropkick")
@@ -61,6 +63,8 @@ return function(Class: CharacterClass.CharacterClass)
 	end
 	StartDropKick.OnServerEvent:Connect(function(PlayerIncoming:Player)
 		if PlayerIncoming == Player then
+			Audio.TimePosition = 0
+			Audio:Play()
 			print("Starting Dropkick")
 			local DamagePercentage = 0
 			

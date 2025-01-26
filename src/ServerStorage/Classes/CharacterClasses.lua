@@ -28,6 +28,7 @@ function CharacterClass.create(Class, Player)
     local RandomModel:Model = ChildrenFolder[RandomIndex]:Clone()
     RandomModel.Parent = Workspace
     Player.Character = RandomModel
+    task.wait(0.35)
     local newRootAttachment = Instance.new("Attachment")
     newRootAttachment.Position = Vector3.zero
     newRootAttachment.Name = "RootAttachment"

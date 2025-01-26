@@ -4,6 +4,7 @@ end
 task.wait(1)
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
+local PlayerGui = Player.PlayerGui
 if not Player:HasAppearanceLoaded() then
 	Player.CharacterAdded:Wait()
 end
@@ -25,7 +26,9 @@ local RegisterJumpEvent = Remotes:WaitForChild("RegisterDoubleJumper")
 local CreatedGameCam: GameCamera.GameCamera
 local PlayerScripts = script.Parent
 local ClassScripts = PlayerScripts:WaitForChild("ClassScripts")
+local ClassModels = ReplicatedStorage:WaitForChild("ClassModels")
 local Items = ReplicatedStorage:WaitForChild("Items")
+
 local CastGun = Remotes:WaitForChild("CastGun")
 local RegisterHit = Remotes:WaitForChild("RegisterHit")
 FastCast.VisualizeCasts = true
@@ -179,6 +182,38 @@ end
 Caster.RayHit:Connect(function(_, b)
 	print(b)
 end)
+
+local CurrentClassSelection
+local function ShowClassSelection()
+	local ClassSelection = PlayerGui:WaitForChild("ClassSelection"):Clone()
+	CurrentClassSelection = ClassSelection
+	local ClassGrid = ClassSelection:WaitForChild("SelectionFrame")
+	local Template = ClassGrid:WaitForChild("ClassSelect")
+	local IconFolder = ReplicatedStorage:WaitForChild("ClassIcons")
+	Template.Parent = ReplicatedStorage
+	for _, Class: Folder in pairs(ClassModels:GetChildren()) do
+
+		local NewTemplate = Template:Clone()
+		NewTemplate.Name = Class.Name
+		local ImageLabel = NewTemplate:WaitForChild("Icon")
+		local Image = IconFolder:FindFirstChild(Class.Name) :: ImageButton
+		local Hitbox = NewTemplate:WaitForChild("Hitbox") :: TextButton
+		Hitbox.Activated:Connect(function()
+			Remotes:WaitForChild("SpawnPlayer"):FireServer(Class.Name)
+			CurrentClassSelection:Destroy()
+		end)
+		print("Connected")
+		if Image then
+			ImageLabel.Image = Image.Value
+		end
+
+		NewTemplate.Parent = ClassGrid
+	end
+	ClassSelection.Enabled = true
+	ClassSelection.Parent = PlayerGui
+end
+
+ShowClassSelection()
 
 CreateGameCamera.OnClientEvent:Connect(onCreateGameCam)
 CreateVisualTool.OnClientEvent:Connect(CreateVisualItem)
