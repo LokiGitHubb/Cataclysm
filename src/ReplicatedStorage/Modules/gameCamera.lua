@@ -26,7 +26,7 @@ export type GameCamera = {
 	swaySpring: any,
 	recoilSpring: any,
 	resume: (self: GameCamera) -> nil,
-	reconnectEffects: (self:GameCamera) -> nil,
+	reconnectEffects: (self: GameCamera) -> nil,
 }
 
 local function getBobbing(addition)
@@ -56,13 +56,20 @@ function GameCamera.create(bobbingSpeed, tiltSpeed)
 		if part:IsA("BasePart") then
 			part.CanCollide = false
 			part.Anchored = false
-			if not part:IsAncestorOf(NewViewModel:WaitForChild("Left Arm")) or not part:IsAncestorOf("Right Arm") then
+			if
+				not part:IsAncestorOf(NewViewModel:WaitForChild("Left Arm"))
+				or not part:IsAncestorOf(NewViewModel:WaitForChild("Right Arm"))
+				or not part:IsAncestorOf(NewViewModel:WaitForChild("Left Leg"))
+				or not part:IsAncestorOf(NewViewModel:WaitForChild("Right Leg"))
+			then
 				part.Transparency = 1
 			end
 		end
 	end
 	NewViewModel["Left Arm"].Transparency = 0
 	NewViewModel["Right Arm"].Transparency = 0
+	NewViewModel["Left Leg"].Transparency = 0
+	NewViewModel["Right Leg"].Transparency = 0
 	self.bobbleSpring = Spring.new()
 	self.swaySpring = Spring.new()
 	self.recoilSpring = Spring.new()

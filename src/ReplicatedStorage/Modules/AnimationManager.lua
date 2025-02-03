@@ -109,6 +109,7 @@ AnimationManager.StopAnimation = function(Reference:string, Player:Player) : any
     end
     local ExistingTrack:LoadedAnimation = TracksPlayingList[Reference]::LoadedAnimation
     if ExistingTrack then
+        print(ExistingTrack)
         ExistingTrack["Track"]:Stop()
         local Info = ExistingTrack["Info"]
         local ViewmodelEnabled = Info["ViewmodelEnabled"]
