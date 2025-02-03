@@ -14,6 +14,7 @@ local RegisterButtonEnded = Remotes:WaitForChild("RegisterInputEnded")
 local StartDropKick = Remotes:WaitForChild("StartChargerDK")
 local EndDropKick = Remotes:WaitForChild("EndChargerDK")
 local startGameCamera = Remotes:WaitForChild("StartBobbing")
+local AnimationManager = require(Modules:WaitForChild("AnimationManager"))
 local Packets = require(ReplicatedStorage:WaitForChild("Packet"))
 local updateChargerPercentage = Packets["UpateChargerPercentage"]
 local Lighting = game:GetService("Lighting")
@@ -30,8 +31,13 @@ return function(Class: CharacterClass.CharacterClass)
 	local TINfo = TweenInfo.new(4, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
 	local deaccelerationTI = TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
 	local UpdateTI = TweenInfo.new(0.1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
+	local Audio = Character:WaitForChild("Torso"):WaitForChild("ChargeSound")::Sound
 	local function StopDropkick(PlayerIncoming:Player)
 		if PlayerIncoming == Player then
+			Audio:Stop()
+			AnimationManager.StopAnimation("CHARGERUN", PlayerIncoming)
+			AnimationManager.LoadAnimation("ChargerDropkick", "ChargerDropkick", Player)
+			AnimationManager.PlayAnimation("ChargerDropkick", Player)
 			Remotes.ResetDropkick:FireClient(PlayerIncoming)
 			Remotes.ChargerGreenFlash:FireClient(PlayerIncoming, false)
 			print("stopping dropkick")
@@ -61,9 +67,12 @@ return function(Class: CharacterClass.CharacterClass)
 	end
 	StartDropKick.OnServerEvent:Connect(function(PlayerIncoming:Player)
 		if PlayerIncoming == Player then
+			Audio.TimePosition = 0
+			Audio:Play()
 			print("Starting Dropkick")
 			local DamagePercentage = 0
-			
+			AnimationManager.LoadAnimation("CHARGERUN", "ChargerRun", Player)
+			AnimationManager.PlayAnimation("CHARGERUN", Player)
 			PercentUpdateTask = task.spawn(function()
 				for _ = 1, 100 do
 					DamagePercentage += 1

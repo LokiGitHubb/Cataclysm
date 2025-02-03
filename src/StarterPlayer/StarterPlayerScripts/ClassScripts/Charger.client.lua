@@ -10,11 +10,16 @@ local Player = Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")::PlayerGui
 local ClassHuds = PlayerGui:WaitForChild("ClassHuds")
 local ChargerHud = ClassHuds:WaitForChild("Charger")
+local ChargeInfo = ChargerHud:WaitForChild("Charge"):WaitForChild("CanvasGroup")
 
 ChargerHud.Enabled = true
+ChargerHud:WaitForChild("Charge").Enabled = true
 
-local ChargeBar = ChargerHud:WaitForChild("Charge")
-local ChargePercentage = ChargerHud:WaitForChild("ChargePercentage")
+
+local ChargeBar = ChargeInfo:WaitForChild("Background").Left.Progress
+local ChargePercentage = ChargeInfo:WaitForChild("Percent").T1
+local ChargePercentage2 = ChargeInfo:WaitForChild("Percent").T2
+
 
 local FillTInfo = TweenInfo.new(8, Enum.EasingStyle.Sine)
 local ResetTInfo = TweenInfo.new(0.1, Enum.EasingStyle.Sine)
@@ -27,8 +32,8 @@ local PropertyTableReset = {
     ["Size"] = UDim2.fromScale(0, 1)
 }
 
-local FillTween = TweenService:Create(ChargeBar:WaitForChild("Bar"), FillTInfo, PropertyTableFill)
-local ResetTween = TweenService:Create(ChargeBar:WaitForChild("Bar"), ResetTInfo, PropertyTableReset)
+local FillTween = TweenService:Create(ChargeBar, FillTInfo, PropertyTableFill)
+local ResetTween = TweenService:Create(ChargeBar, ResetTInfo, PropertyTableReset)
 
 StartBarFill.OnClientEvent:Connect(function()
     FillTween:Play()
@@ -39,7 +44,8 @@ EndBarFill.OnClientEvent:Connect(function()
 end)
 
 local function updateChargerPercentage(newPercentage)
-    ChargePercentage.TextLabel.Text = newPercentage
+    ChargePercentage.Text = tostring(newPercentage) .. "%"
+    ChargePercentage2.Text = tostring(newPercentage) .. "%"
 end
 
 local function changeGreenFlash(bool)

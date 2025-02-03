@@ -4,6 +4,7 @@ end
 task.wait(1)
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
+local PlayerGui = Player.PlayerGui
 if not Player:HasAppearanceLoaded() then
 	Player.CharacterAdded:Wait()
 end
@@ -12,9 +13,12 @@ local Humanoid = Character:WaitForChild("Humanoid") :: Humanoid
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
 local Modules = ReplicatedStorage:WaitForChild("Modules")
+local FastCast = require(Modules:WaitForChild("FastCastRedux"))
+local FastCastType = require(Modules.FastCastRedux.TypeDefinitions)
 local CharacterTorso = Character:WaitForChild("Torso") :: BasePart
 local GameCamera = require(Modules:WaitForChild("gameCamera"))
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
+local RemoteFunctions = Remotes:WaitForChild("Functions")
 local GameCameraRemotes = Remotes:WaitForChild("GameCamera")
 local CreateGameCamera = GameCameraRemotes:WaitForChild("CreateGameCamera")
 local CreateVisualTool = GameCameraRemotes:WaitForChild("CreateVisualTool")
@@ -22,12 +26,16 @@ local RegisterJumpEvent = Remotes:WaitForChild("RegisterDoubleJumper")
 local CreatedGameCam: GameCamera.GameCamera
 local PlayerScripts = script.Parent
 local ClassScripts = PlayerScripts:WaitForChild("ClassScripts")
+local ClassModels = ReplicatedStorage:WaitForChild("ClassModels")
 local Items = ReplicatedStorage:WaitForChild("Items")
 
-for _, classScript:LocalScript in pairs(ClassScripts:GetChildren()) do
+local CastGun = Remotes:WaitForChild("CastGun")
+local RegisterHit = Remotes:WaitForChild("RegisterHit")
+FastCast.VisualizeCasts = true
+
+for _, classScript: LocalScript in pairs(ClassScripts:GetChildren()) do
 	classScript.Enabled = false
 end
-
 
 export type ButtonBinding = {
 	name: string,
@@ -36,7 +44,7 @@ export type ButtonBinding = {
 
 local function onCreateGameCam(bobbingSpeed, tiltSpeed)
 	print("CREATING GAME CAMERA")
-	CreatedGameCam = GameCamera.create(bobbingSpeed, tiltSpeed)::GameCamera.GameCamera
+	CreatedGameCam = GameCamera.create(bobbingSpeed, tiltSpeed) :: GameCamera.GameCamera
 	CreatedGameCam:resume()
 	print("RESUMED GAME CAMERA")
 end
@@ -100,8 +108,8 @@ local function RegisterDoubleJump()
 end
 
 local keybinds: {} = {}
-local endedKeybinds:{} = {}
- 
+local endedKeybinds: {} = {}
+
 local function registerButtonBind(keybind: Enum.KeyCode, remote, name)
 	local keybindExisting = keybinds[keybind]
 	if keybindExisting then
@@ -111,7 +119,7 @@ local function registerButtonBind(keybind: Enum.KeyCode, remote, name)
 	keybinds[keybind] = { ["remote"] = remote, ["name"] = name }
 end
 
-local function registerInputEnded(keybind:Enum.KeyCode, remote, name)
+local function registerInputEnded(keybind: Enum.KeyCode, remote, name)
 	local keybindExisting = endedKeybinds[keybind]
 	if keybindExisting then
 		warn("OVERWRITING KEYBIND EXISTANCE")
@@ -122,12 +130,9 @@ end
 local function processInput(Input: InputObject, gameProcessed)
 	if not gameProcessed then
 		local callback = keybinds[Input.KeyCode]
-		print(callback)
-		print(Input.KeyCode)
 		if callback then
 			local remote = callback["remote"]
 			if callback then
-				print(callback)
 				remote:FireServer(callback["name"])
 			end
 		end
@@ -166,6 +171,49 @@ local function enableClassScript(class)
 	end
 end
 
+local Caster = FastCast.new()
+local function Cast(Origin, Direction, Velocity, Params: RaycastParams)
+	print("CASTING")
+	local NewBehavior = FastCast.newBehavior()
+	NewBehavior.RaycastParams = Params
+	Caster:Fire(Origin, Direction, Velocity, NewBehavior)
+end
+
+Caster.RayHit:Connect(function(_, b)
+	print(b)
+end)
+
+local CurrentClassSelection
+local function ShowClassSelection()
+	local ClassSelection = PlayerGui:WaitForChild("ClassSelection"):Clone()
+	CurrentClassSelection = ClassSelection
+	local ClassGrid = ClassSelection:WaitForChild("SelectionFrame")
+	local Template = ClassGrid:WaitForChild("ClassSelect")
+	local IconFolder = ReplicatedStorage:WaitForChild("ClassIcons")
+	Template.Parent = ReplicatedStorage
+	for _, Class: Folder in pairs(ClassModels:GetChildren()) do
+
+		local NewTemplate = Template:Clone()
+		NewTemplate.Name = Class.Name
+		local ImageLabel = NewTemplate:WaitForChild("Icon")
+		local Image = IconFolder:FindFirstChild(Class.Name) :: ImageButton
+		local Hitbox = NewTemplate:WaitForChild("Hitbox") :: TextButton
+		Hitbox.Activated:Connect(function()
+			Remotes:WaitForChild("SpawnPlayer"):FireServer(Class.Name)
+			CurrentClassSelection:Destroy()
+		end)
+		print("Connected")
+		if Image then
+			ImageLabel.Image = Image.Value
+		end
+
+		NewTemplate.Parent = ClassGrid
+	end
+	ClassSelection.Enabled = true
+	ClassSelection.Parent = PlayerGui
+end
+
+ShowClassSelection()
 
 CreateGameCamera.OnClientEvent:Connect(onCreateGameCam)
 CreateVisualTool.OnClientEvent:Connect(CreateVisualItem)
@@ -177,3 +225,4 @@ Remotes.RegisterInputEnded.OnClientEvent:Connect(registerInputEnded)
 Remotes.StopBobbing.OnClientEvent:Connect(stopBobbing)
 Remotes.StartBobbing.OnClientEvent:Connect(ResumeBobbing)
 Remotes.EnableCharacterClient.OnClientEvent:Connect(enableClassScript)
+Remotes.CastGun.OnClientEvent:Connect(Cast)
