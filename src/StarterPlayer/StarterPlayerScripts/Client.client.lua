@@ -1,33 +1,38 @@
-if not game:IsLoaded() then
-	game.Loaded:Wait()
-end
+if not game:IsLoaded() then game.Loaded:Wait(); end
+
 task.wait(1)
 local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
 local Player = Players.LocalPlayer
+local Character = Player.Character :: Model
+local CharacterTorso = Character:WaitForChild("Torso") :: BasePart
+local Humanoid = Character:WaitForChild("Humanoid") :: Humanoid
 local PlayerGui = Player.PlayerGui
 if not Player:HasAppearanceLoaded() then
 	Player.CharacterAdded:Wait()
 end
-local Character = Player.Character :: Model
-local Humanoid = Character:WaitForChild("Humanoid") :: Humanoid
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local UserInputService = game:GetService("UserInputService")
+
 local Modules = ReplicatedStorage:WaitForChild("Modules")
 local FastCast = require(Modules:WaitForChild("FastCastRedux"))
 local FastCastType = require(Modules.FastCastRedux.TypeDefinitions)
-local CharacterTorso = Character:WaitForChild("Torso") :: BasePart
 local GameCamera = require(Modules:WaitForChild("gameCamera"))
+local Ballistics = require(Modules:WaitForChild("Ballistics"))
+
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
 local RemoteFunctions = Remotes:WaitForChild("Functions")
 local GameCameraRemotes = Remotes:WaitForChild("GameCamera")
-local CreateGameCamera = GameCameraRemotes:WaitForChild("CreateGameCamera")
-local CreateVisualTool = GameCameraRemotes:WaitForChild("CreateVisualTool")
 local RegisterJumpEvent = Remotes:WaitForChild("RegisterDoubleJumper")
-local CreatedGameCam: GameCamera.GameCamera
+
 local PlayerScripts = script.Parent
 local ClassScripts = PlayerScripts:WaitForChild("ClassScripts")
 local ClassModels = ReplicatedStorage:WaitForChild("ClassModels")
 local Items = ReplicatedStorage:WaitForChild("Items")
+
+local CreatedGameCam: GameCamera.GameCamera
+local CreateGameCamera = GameCameraRemotes:WaitForChild("CreateGameCamera")
+local CreateVisualTool = GameCameraRemotes:WaitForChild("CreateVisualTool")
 
 local CastGun = Remotes:WaitForChild("CastGun")
 local RegisterHit = Remotes:WaitForChild("RegisterHit")
