@@ -5,10 +5,7 @@
       "ReplicatedStorage": {
         "$className": "ReplicatedStorage",
         "$ignoreUnknownInstances": true,
-        "$path": "src/ReplicatedStorage",
-          "Packages":{
-              "$path": "Packages"
-          }
+        "$path": "src/ReplicatedStorage"
       },
       "ServerScriptService": {
         "$className": "ServerScriptService",
@@ -23,11 +20,7 @@
       "ServerStorage": {
         "$className": "ServerStorage",
         "$ignoreUnknownInstances": true,
-        "$path": "src/ServerStorage",
-          "DeveloperPackages":{
-            "$path": "DevPackages",
-            "$className":"Folder"
-          }
+        "$path": "src/ServerStorage"
       },
       "StarterGui": {
         "$className": "StarterGui",
@@ -40,6 +33,11 @@
           "$className": "StarterPlayerScripts",
           "$ignoreUnknownInstances": true,
           "$path": "src/StarterPlayer/StarterPlayerScripts"
+        },
+        "StarterCharacterScripts": {
+          "$className": "StarterCharacterScripts",
+          "$ignoreUnknownInstances": true,
+          "$path": "src/StarterPlayer/StarterCharacterScripts"
         },
         "$ignoreUnknownInstances": true
       },

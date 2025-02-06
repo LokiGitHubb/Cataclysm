@@ -840,7 +840,6 @@ function FX.Explosion(position, hitPart, normal)
 	exp.Parent = hitMark
 
 	debris:AddItem(hitMark, 5)
-
 end
 
 return FX
