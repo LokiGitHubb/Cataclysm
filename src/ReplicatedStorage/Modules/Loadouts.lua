@@ -1,8 +1,9 @@
 local Loadouts = {}
 
 Loadouts.Assault = {
-    ["Primary"] = "AKM",
-    ["Secondary"] = "M9",
+   "AKM",
+   --"M9",
+   --"Knife"
 }
 
 return Loadouts

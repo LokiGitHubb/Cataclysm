@@ -12,6 +12,7 @@ local modules = RS.Modules
 local gunModels = RS.GunModels
 local assets = RS.Assets
 local remotes = RS.Remotes
+local playerData = RS.PlayerData:FindFirstChild(player.Name)
 
 local Main = require(modules.MainModule)
 local Ballistics = require(modules.Ballistics)
@@ -82,7 +83,7 @@ run.RenderStepped:Connect(function(dt)
 	Main.updateViewmodel(playerVM, gun, dt, recoilSpring, bobbleSpring, swaySpring)
 
 	if isLMBDown then
-		if canFire and gun and gun:FindFirstChild("Nodes") then
+		if canFire and gun and gun:FindFirstChild("Nodes") and playerData[gun.Name].Ammo.Value > 0 then
 			canFire = false
 
 			local muzzle = gun.Nodes.MuzzlePart

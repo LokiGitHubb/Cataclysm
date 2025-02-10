@@ -21,6 +21,13 @@
                             ]
                         },
                         {
+                            "name": "Loadouts",
+                            "className": "ModuleScript",
+                            "filePaths": [
+                                "src/ReplicatedStorage/Modules/Loadouts.lua"
+                            ]
+                        },
+                        {
                             "name": "MainModule",
                             "className": "ModuleScript",
                             "filePaths": [
@@ -50,6 +57,13 @@
             "className": "ServerScriptService",
             "children": [
                 {
+                    "name": "FPSServer",
+                    "className": "Script",
+                    "filePaths": [
+                        "src/ServerScriptService/FPSServer.server.lua"
+                    ]
+                },
+                {
                     "name": "Server",
                     "className": "Script",
                     "filePaths": [
@@ -67,10 +81,23 @@
                     "className": "StarterCharacterScripts",
                     "children": [
                         {
+                            "name": "FPSClient",
+                            "className": "LocalScript",
+                            "filePaths": [
+                                "src/StarterPlayer/StarterCharacterScripts/FPSClient.client.lua"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "StarterPlayerScripts",
+                    "className": "StarterPlayerScripts",
+                    "children": [
+                        {
                             "name": "Client",
                             "className": "LocalScript",
                             "filePaths": [
-                                "src/StarterPlayer/StarterCharacterScripts/Client.client.lua"
+                                "src/StarterPlayer/StarterPlayerScripts/Client.client.lua"
                             ]
                         }
                     ]

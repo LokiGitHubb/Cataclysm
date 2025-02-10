@@ -1,3 +1,4 @@
+--!strict
 local run  = game:GetService("RunService")
 
 local Ballistics = {}
