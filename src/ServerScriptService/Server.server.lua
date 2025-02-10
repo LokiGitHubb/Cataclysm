@@ -1,43 +1,45 @@
 local RS = game:GetService("ReplicatedStorage")
+local players = game:GetService("Players")
 
-local modules = RS.Modules
-local remotes = RS.Remotes
+local playerData = RS.PlayerData
 
-local Ballistics = require(modules.Ballistics)
-local FX = require(modules.VisualEffects)
+players.PlayerAdded:Connect(function(player:Player)
+    local playerFolder = Instance.new("Folder")
+    playerFolder.Name = player.Name
+    playerFolder.Parent = playerData
 
-local random = Random.new(1234)
+    for i = 1, 2 do
+        local gunFolder = Instance.new("Folder")
+        gunFolder.Name = tostring(i)
 
-local bastic = Ballistics.new()
---bastic.Acceleration = Vector3.yAxis * -workspace.Gravity
+        local weapon = Instance.new("StringValue")
+        weapon.Name = "Weapon"
+        weapon.Parent = gunFolder
+        
+        local ammo = Instance.new("IntValue")
+        ammo.Name = "Ammo"
+        ammo.Parent = gunFolder
 
-remotes.Fire.OnServerEvent:Connect(function(player:Player,origin:Vector3, direction:Vector3)
-	local character = player.Character
-	if not character then return; end
-	
-	local tool = character:FindFirstChildOfClass("Tool")
-	if not tool then return; end
-	
-	local weaponData = tool:FindFirstChild("WeaponSettings")
-	if not weaponData then return; end
-	weaponData = require(weaponData)
-	
-	local directionCF = CFrame.new(Vector3.zero, direction)
-	local spreadDir = (directionCF * CFrame.fromOrientation(0, 0, random:NextNumber(0, math.pi * 2)) * CFrame.fromOrientation(math.rad(random:NextNumber(weaponData.MinSpread, weaponData.MaxSpread)), 0, 0)).LookVector
-	
-	bastic:Fire({Player = player, WeaponData = weaponData}, origin, direction, weaponData.MuzzleVelocity)
-	remotes.Fire:FireAllClients(player, origin, direction, weaponData.MuzzleVelocity)
+        local maxAmmo = Instance.new("IntValue")
+        maxAmmo.Name = "MaxAmmo"
+        maxAmmo.Parent = gunFolder
+
+        gunFolder.Parent = playerFolder
+    end
+
+    do
+        local meleeFolder = Instance.new("Folder")
+        meleeFolder.Name = "Melee"
+    
+        local weapon = Instance.new("StringValue")
+        weapon.Name = "Weapon"
+        weapon.Parent = meleeFolder
+    
+        meleeFolder.Parent = playerFolder 
+    end
 end)
 
-bastic.Hit.Event:Connect(function(raycastResult:RaycastResult, userData:{[any]:any}?)
-	local hitPart = raycastResult.Instance
-	local hitPoint = raycastResult.Position
-	local normal = raycastResult.Normal
-	
-	if hitPart ~= nil and hitPart.Parent ~= nil then
-		local humanoid = hitPart.Parent:FindFirstChildOfClass("Humanoid")
-		if humanoid then
-			humanoid:TakeDamage(userData.WeaponData.Damage)
-		end
-	end
+players.PlayerRemoving:Connect(function(player:Player)
+    local playerFolder = playerData:FindFirstChild(player.Name)
+    playerFolder:Destroy()
 end)
