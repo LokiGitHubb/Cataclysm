@@ -63,6 +63,7 @@ end
 
 function MainModule.playAnimation(viewmodel:Model, anim:Animation)
 	if not MainModule.Tracks[anim] then MainModule.Tracks[anim] = viewmodel.AnimationController:LoadAnimation(anim); end
+    MainModule.Tracks[anim].Looped = (anim:FindFirstChild("Looped") and anim.Looped.Value == true and true) or false
 	MainModule.Tracks[anim]:Play(0)
 	MainModule.CurrentlyPlaying = MainModule.Tracks[anim]
 end

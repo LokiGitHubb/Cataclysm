@@ -135,6 +135,9 @@ UIS.InputBegan:Connect(function(input, gameProcessed)
 	elseif input.UserInputType == Enum.UserInputType.MouseButton2 then
         if not gun then return; end
 		Main.aim(true, playerVM, gun, weaponData.ADSTime)
+    elseif input.KeyCode == Enum.KeyCode.R then
+        remotes.Reload:FireServer()
+        Main.playAnimation(playerVM, RS.GunAnimation:FindFirstChild(gun.Name).Reload)
 	end
 end)
 

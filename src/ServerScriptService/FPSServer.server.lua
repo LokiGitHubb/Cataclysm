@@ -37,6 +37,34 @@ remotes.Fire.OnServerEvent:Connect(function(player:Player,origin:Vector3, direct
     remotes.Fire:FireAllClients(player, origin, spreadDir, weaponData.MuzzleVelocity) 
 end)
 
+remotes.Reload.OnServerEvent:Connect(function(player:Player)
+    local playerData = playerData:FindFirstChild(player.Name)
+
+	local character = player.Character
+	if not character then return; end
+	
+	local tool = character:FindFirstChildOfClass("Tool")
+	if not tool then return; end
+	
+	local weaponData = tool:FindFirstChild("WeaponSettings")
+	if not weaponData then return; end
+	weaponData = require(weaponData)
+
+    local gunFolder = playerData:FindFirstChild(weaponData.Name)
+    local ammo = gunFolder.Ammo
+    local maxAmmo = gunFolder.MaxAmmo
+
+    task.delay(weaponData.ReloadTime, function()
+        if ammo.Value == 0 then
+            maxAmmo.Value -= 30
+            ammo.Value = 30
+        else
+            maxAmmo.Value -= 31 - ammo.Value
+            ammo.Value = 31
+        end
+    end)
+end)
+
 bastic.Hit.Event:Connect(function(raycastResult:RaycastResult, userData:{[any]:any}?)
 	local hitPart = raycastResult.Instance
 	local hitPoint = raycastResult.Position
